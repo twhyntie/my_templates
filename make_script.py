@@ -30,10 +30,12 @@ if __name__ == "__main__":
 
     # Get the datafile path from the command line.
     parser = argparse.ArgumentParser()
-    parser.add_argument("scriptBaseName",         help="Base name of the script being generated.")
-#    parser.add_argument("dataPath",         help="Path to the input image.")
-    parser.add_argument("outputPath",       help="Path to the output folder.")
-    parser.add_argument("--homepage",  help="The project homepage.", default="https://www.tomwhyntie.com", type=str)
+    parser.add_argument("scriptBaseName", help="Base name of the script being generated.")
+    parser.add_argument("outputPath",     help="Path to the output folder.")
+    parser.add_argument("--homepage",     help="The project homepage.", default="https://www.tomwhyntie.com", type=str)
+    parser.add_argument("--inputfile",    help="Should the script have an input file argument?", action="store_true")
+    parser.add_argument("--inputdir",     help="Should the script have an input directory?", action="store_true")
+    #parser.add_argument("--inputdir",     help="Should the script have an input directory argument?")
 #    parser.add_argument("--subject-width",  help="The desired subject image width [pixels].",  default=128, type=int)
 #    parser.add_argument("--subject-height", help="The desired subject image height [pixels].", default=128, type=int)
     parser.add_argument("-v", "--verbose",  help="Increase output verbosity", action="store_true")
@@ -48,27 +50,12 @@ if __name__ == "__main__":
     ## The script filename.
     script_filename = script_name + ".py"
 
-#    ## The path to the image.
-#    data_path = args.dataPath
-#    #data_path = os.path.join(args.dataPath, "RAW/data")
-#    #
-#    if not os.path.exists(data_path):
-#        raise IOError("* ERROR: Unable to find image at '%s'." % (data_path))
-
     ## The output path.
     output_path = args.outputPath
-    #output_path = "./"
-    #output_path = os.path.join(args.dataPath, "SPL/data")
     #
     # Check if the output directory exists. If it doesn't, raise an error.
     if not os.path.isdir(output_path):
         raise IOError("* ERROR: '%s' output directory does not exist!" % (output_path))
-
-#    ## The required width of the subject images [pixels].
-#    SubjectWidth = args.subject_width
-#
-#    ## The required height of the split images [pixels].
-#    SubjectHeight = args.subject_height
 
     # Set the logging level.
     if args.verbose:
@@ -149,7 +136,7 @@ if __name__ == "__main__":
     #
 
     s += """    # Parse the command line arguments.
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()INPUT_ARGUMENTS
     parser.add_argument("outputPath",      help="Path to the output folder.")
     parser.add_argument("--homepage",      help="The project homepage.", default="https://www.tomwhyntie.com", type=str)
     parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
@@ -186,11 +173,65 @@ if __name__ == "__main__":
 
 """ % (script_name)
 
+    lg.info(" * SCRIPT ARGUMENTS:")
+    lg.info(" *")
+
+    #
+    # INPUT
+    #
+    # If an input file is requested, add it to the argument list and variable
+    # initialisation bits.
+
+    ## The input arguments string.
+    input_args_s = ""
+
+    ## The input information string.
+    input_s = "# (No input requested.)\n"
+
+    if args.inputfile:
+        # Add the argument parser line.
+        input_args_s += "\n    parser.add_argument(\"inputFilePath\",   " + \
+                        "help=\"Path to the input file.\")"
+        #
+        # Add the input file path string variable.
+        s += """    ## The path to the input file.
+    input_file_path = args.inputFilePath
+    #
+    if not os.path.exists(input_file_path):
+        raise IOError("* ERROR: Unable to find input file at '%s'." % (input_file_path))
+
+"""
+        lg.info(" * Added an input file path argument.")
+    if args.inputdir:
+        # Add the argument parser line.
+        input_args_s += "\n    parser.add_argument(\"inputDirectory\",  " + \
+                        "help=\"Path to the input directory.\")"
+        #
+        # Add the input file path string variable.
+        s += """    ## The path to the input file.
+    input_path = args.inputDirectory
+    #
+    if not os.path.isdir(input_path):
+        raise IOError("* ERROR: Unable to find input directory at '%s'." % (input_path))
+
+"""
+        lg.info(" * Added an input file path argument.")
+    if not args.inputfile and not args.inputdir:
+        lg.info(" * No input file required.")
+        s = s.replace("INPUT_INFO", input_s)
+    lg.info(" *")
+    s = s.replace("INPUT_ARGUMENTS", input_args_s)
+
+    # Update the user via the log file.
     s += "    lg.info(\" *=" + len(script_filename)*"=" + "=*\")\n"
     s += "    lg.info(\" * " + script_filename + " *\")\n"
     s += "    lg.info(\" *=" + len(script_filename)*"=" + "=*\")\n"
     s += "    lg.info(\" *\")\n"
-    s += "    lg.info(\" * Output path : %s\" % (output_path))\n"
+    if args.inputfile:
+        s += "    lg.info(\" * Input file path : %s\" % (input_file_path))\n"
+    if args.inputdir:
+        s += "    lg.info(\" * Input path      : %s\" % (input_path))\n"
+    s += "    lg.info(\" * Output path     : %s\" % (output_path))\n"
     s += "    lg.info(\" *\")\n\n"
 
 
