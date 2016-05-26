@@ -35,9 +35,6 @@ if __name__ == "__main__":
     parser.add_argument("--homepage",     help="The project homepage.", default="https://www.tomwhyntie.com", type=str)
     parser.add_argument("--inputfile",    help="Should the script have an input file argument?", action="store_true")
     parser.add_argument("--inputdir",     help="Should the script have an input directory?", action="store_true")
-    #parser.add_argument("--inputdir",     help="Should the script have an input directory argument?")
-#    parser.add_argument("--subject-width",  help="The desired subject image width [pixels].",  default=128, type=int)
-#    parser.add_argument("--subject-height", help="The desired subject image height [pixels].", default=128, type=int)
     parser.add_argument("-v", "--verbose",  help="Increase output verbosity", action="store_true")
     args = parser.parse_args()
 
@@ -64,7 +61,7 @@ if __name__ == "__main__":
         level=lg.INFO
 
     ## Log file path.
-    log_file_path = os.path.join(output_path, 'log_%s.log' % (script_name))
+    log_file_path = os.path.join(output_path, 'log_writing_%s.log' % (script_name))
 
     # Configure the logging.
     lg.basicConfig(filename=log_file_path, filemode='w', level=level)
@@ -138,7 +135,6 @@ if __name__ == "__main__":
     s += """    # Parse the command line arguments.
     parser = argparse.ArgumentParser()INPUT_ARGUMENTS
     parser.add_argument("outputPath",      help="Path to the output folder.")
-    parser.add_argument("--homepage",      help="The project homepage.", default="https://www.tomwhyntie.com", type=str)
     parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
     args = parser.parse_args()
 
@@ -236,5 +232,5 @@ if __name__ == "__main__":
 
 
     # Write out the script to the output path.
-    with open(os.path.join(output_path, script_filename), "w") as sf:
+    with open(os.path.join(output_path, script_filename+"_BLANK"), "w") as sf:
         sf.write(s)
