@@ -11,8 +11,16 @@
 
 """
 
+#...for the future!
+from __future__ import absolute_import
+
 # Import the code needed to manage files.
-import os, glob
+import os
+#
+from os.path import join    as opj
+from os.path import exists  as ope
+from os.path import abspath as opa
+from os      import linesep as ls
 
 #...for parsing the arguments.
 import argparse
@@ -35,6 +43,9 @@ if __name__ == "__main__":
     parser.add_argument("--homepage",     help="The project homepage.", default="https://www.tomwhyntie.com", type=str)
     parser.add_argument("--inputfile",    help="Should the script have an input file argument?", action="store_true")
     parser.add_argument("--inputdir",     help="Should the script have an input directory?", action="store_true")
+    parser.add_argument("--usemath",      help="Import math stuff?", action="store_true")
+    parser.add_argument("--usedata",      help="Import data stuff?", action="store_true")
+    parser.add_argument("--useplot",      help="Import plotting stuff?", action="store_true")
     parser.add_argument("-v", "--verbose",  help="Increase output verbosity", action="store_true")
     args = parser.parse_args()
 
@@ -102,8 +113,16 @@ if __name__ == "__main__":
 
 \"\"\"
 
+#...for the future!
+from __future__ import absolute_import
+
 #...for the Operating System stuff.
 import os
+#
+from os.path import join    as opj
+from os.path import exists  as ope
+from os.path import abspath as opa
+from os      import linesep as ls
 
 #...for parsing the arguments.
 import argparse
@@ -111,8 +130,11 @@ import argparse
 #...for the logging.
 import logging as lg
 
-
+MATH_IMPORTSDATA_IMPORTSPLOT_IMPORTS
 if __name__ == "__main__":
+
+    ## The full path of where we're running from.
+    running_from = opa(__file__)
 
     print("*")
 """ % (script_filename)
@@ -218,11 +240,58 @@ if __name__ == "__main__":
     lg.info(" *")
     s = s.replace("INPUT_ARGUMENTS", input_args_s)
 
+    #
+    # MATH
+    #
+    math_imports = """#...for the MATH!
+import numpy as np
+
+"""
+    #
+    if args.usemath:
+        lg.info(" * Adding math imports...")
+        s = s.replace("MATH_IMPORTS", math_imports)
+    else:
+        s = s.replace("MATH_IMPORTS", "")
+
+    #
+    # DATA
+    #
+    data_imports = """#...for the data.
+import pandas as pd
+
+"""
+    #
+    if args.usedata:
+        lg.info(" * Adding data imports...")
+        s = s.replace("DATA_IMPORTS", data_imports)
+    else:
+        s = s.replace("DATA_IMPORTS", "")
+
+    #
+    # PLOTTING
+    #
+    plot_imports = """#...for the plotting.
+import matplotlib.pyplot as plt
+
+"""
+    #
+    if args.useplot:
+        lg.info(" * Adding plotting imports...")
+        s = s.replace("PLOT_IMPORTS", plot_imports)
+    else:
+        s = s.replace("PLOT_IMPORTS", "")
+
+    lg.info(" *")
+
     # Update the user via the log file.
     s += "    lg.info(\" *=" + len(script_filename)*"=" + "=*\")\n"
     s += "    lg.info(\" * " + script_filename + " *\")\n"
     s += "    lg.info(\" *=" + len(script_filename)*"=" + "=*\")\n"
     s += "    lg.info(\" *\")\n"
+    s += "    lg.info(\" * Running from    : %s\" % (running_from))\n"
+    s += "    lg.info(\" *\")\n"
+
     if args.inputfile:
         s += "    lg.info(\" * Input file path : %s\" % (input_file_path))\n"
     if args.inputdir:
