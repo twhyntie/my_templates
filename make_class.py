@@ -116,7 +116,7 @@ class CLASS_NAME_UPPER(object):
 
         lg.debug("*")
         lg.debug("*---------------------------------------------------------")
-        lg.debug("* Finished constructing CLASS_NAME_UPPER '%s'." % (self.get_name()))
+        lg.debug("* Finished constructing CLASS_NAME_UPPER!")
         lg.debug("*---------------------------------------------------------")
         lg.debug("*")
 """
